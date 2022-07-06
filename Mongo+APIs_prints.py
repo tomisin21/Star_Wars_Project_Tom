@@ -1,4 +1,4 @@
-from mongo_apis_functions import *
+from starwars_functions import *
 
 
 print('<--------------------------- 1. Printing data retrieved from swapi --------------------------->')
