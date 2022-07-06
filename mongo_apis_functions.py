@@ -6,9 +6,9 @@ client = pymongo.MongoClient()
 db = client['starwars']
 
 
-def get_starwars_data(api_url='https://swapi.dev/api/', keyword='starships', page_number=1, star_wars_data=[]):
+def get_starwars_data(api_url='https://swapi.dev/api', keyword='starships', page_number=1, star_wars_data=[]):
     # This function provides a list of all the items within a given category in the swapi database.
-    # By creating arguments for the site api & category as well as providing default arguments the flexibility
+    # By creating arguments and providing default arguments for the site api & category values the flexibility
     # of the code is significantly increased.
     # This function is also a recursive function which is operates by providing an iterative index (page_number)
     # which updates the page number in url string.
@@ -16,7 +16,7 @@ def get_starwars_data(api_url='https://swapi.dev/api/', keyword='starships', pag
     # which by providing a default argument of an empty list
     # ensures it's updated everytime the recursive function is in operation
 
-    url = f"{api_url}{keyword}/?page={page_number}"  # Forming the URL string from the arguments provided
+    url = f"{api_url}/{keyword}/?page={page_number}"  # Forming the URL string from the arguments provided
     response = requests.request("GET", url)
 
 
@@ -73,10 +73,11 @@ def overwrite(collection_name='starships'):
         print('Function to carry on as usual')
 
 
-def insert_data(dataset, collection_name='starships'):
+def insert_data(dataset, collection_name='starships', overwrite=False):
     # This function uploads a given star wars dataset into a specified collection.
 
-    overwrite(collection_name)  # Calling the overwrite function
+    if overwrite:  # Calling the overwrite function
+        return db[collection_name].delete_many({})
 
     collection_check = []
     for item in dataset:
