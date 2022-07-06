@@ -2,8 +2,10 @@ from starwars_api_classes import *
 import unittest
 
 
-
 class TestUser(unittest.TestCase):
+
+
+    db = pymongo.MongoClient()['starwars']
 
     def setUp(self) -> None:
         self.star_wars1 = Starwars()
@@ -29,16 +31,20 @@ class TestUser(unittest.TestCase):
         id_length = len(str(actual[4]['pilots'][0]))
         test_pilot_list = actual[4]['pilots']
         self.assertEqual(len(actual), 36, 'Expected to produce a list with 36 items')
-        for pilot in test_pilot_list:
+        for pilot in test_pilot_list[:2]:
             self.assertEqual(len(str(pilot)), id_length, 'The pilot key should be 24 characters')
 
+    def test_insert_data(self):
+        test = self.star_wars1.insert_data()
+        self.assertEqual(len(test), 36)
+        pass
 
 
 
 
-# star_wars1 = Starwars()
-# dataset = star_wars1.get_starwars_data()
-# pprint(dataset)
+
+
+
 
 
 

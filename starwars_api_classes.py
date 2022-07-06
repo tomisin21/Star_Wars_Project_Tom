@@ -2,6 +2,7 @@ import requests
 import pymongo
 from pprint import pprint
 
+
 # client = pymongo.MongoClient()
 # db = client['starwars']
 
@@ -36,12 +37,12 @@ class Starwars:
         for result in response.json()['results']:
             self.star_wars_data.append(result)
 
-        if response.json()['next'] is not None:  # If the value of 'next' contains a url to the next page, do the following:
+        if response.json()[
+            'next'] is not None:  # If the value of 'next' contains a url to the next page, do the following:
             self.page_number += 1  # Updates the page number
             return self.get_starwars_data()
 
         return self.star_wars_data  # Return the list of items
-
 
     def get_pilot_info(self):
         # This function replaces the pilot key in a star wars dataset with the name
@@ -58,8 +59,6 @@ class Starwars:
 
         return starship_data
 
-
-
     def replace_with_id(self):
         # This function replaces the pilot key in a star wars dataset with the object id
         starship_data = self.get_pilot_info()
@@ -72,7 +71,6 @@ class Starwars:
                     pilot_data.append(object_id['_id'])
                     starship['pilots'] = pilot_data
         return starship_data
-
 
     def overwrite(self, collection_name='starships'):
         # User has the option of overwriting their specified collection
@@ -90,11 +88,13 @@ class Starwars:
             print('Function to carry on as usual')
 
 
-    def insert_data(self, dataset, collection_name='starships', overwrite=False):
+    def insert_data(self, collection_name='starships', overwrite=True):
         # This function uploads a given star wars dataset into a specified collection.
 
+        dataset = self.replace_with_id()
+
         if overwrite:  # Calling the overwrite function
-            return self.db[collection_name].delete_many({})
+            self.db[collection_name].delete_many({})
 
         collection_check = []
         for item in dataset:
@@ -104,3 +104,4 @@ class Starwars:
 
         pprint(f'Uploaded following dataset: {collection_check} Length: {list_length}')
         print('Function Completed')
+        return collection_check

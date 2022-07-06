@@ -77,7 +77,7 @@ def insert_data(dataset, collection_name='starships', overwrite=False):
     # This function uploads a given star wars dataset into a specified collection.
 
     if overwrite:  # Calling the overwrite function
-        return db[collection_name].delete_many({})
+        db[collection_name].delete_many({})
 
     collection_check = []
     for item in dataset:
