@@ -4,22 +4,28 @@ import unittest
 
 class TestUser(unittest.TestCase):
 
-    def __init__(self):
-        super().__init__()
-        self.starwars_db = pymongo.MongoClient()['starwars']
-        self.test_dataset = {'test': 'testing_value',
-                             'pilot': 'https://swapi.dev/api/people/13/'}
 
     def setUp(self) -> None:
         self.star_wars1 = Starwars()
-        self.test_pilot_info_dataset = self.star_wars1.get_starwars_data()
-        self.test_pilot_ids = self.star_wars1.get_pilot_info(self.test_pilot_info_dataset)
+        # self.test_pilot_info_dataset = self.star_wars1.get_starwars_data()
+        # self.test_pilot_ids = self.star_wars1.get_pilot_info(self.test_pilot_info_dataset)
+
+
+    def connect_to_database(self):
+        self.starwars_db = pymongo.MongoClient()['starwars']
+        return self.starwars_db
+
+
+    def create_test_dataset(self):
+        self.test_dataset = {'test': 'testing_value',
+                             'pilot': 'https://swapi.dev/api/people/13/'}
+        return self.test_dataset
 
 
     def test_generate_url(self):
         actual = self.star_wars1.generate_url_string()
         expected = 'https://swapi.dev/api/starships/?page=1'
-        message = f'Expected to generate the url string {expected}'
+        message = f'Expected to generate the url string {expected} instead of {actual}'
         self.assertEqual(actual, expected, message)
 
 
@@ -50,19 +56,14 @@ class TestUser(unittest.TestCase):
 
     def test_insert_data(self):
         test = self.star_wars1.insert_data(self.test_dataset, overwrite=False)
-        test_query = self.starwars_db.starships.find_one({'test': 'testing_value'})
+        starwars_db = self.connect_to_database()
+        test_dataset = self.create_test_dataset()
+        test_query = starwars_db.starships.find_one({'test': 'testing_value'})
         if self.assertEqual(test_query, self.test_dataset):
             self.starwars_db.starships.delete_one({'test': 'testing_value'})
             print('Test carried out successfully')
         else:
             print('Test carried out unsuccessfully')
-
-
-
-
-
-
-
 
 
 
