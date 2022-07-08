@@ -68,7 +68,7 @@ def overwrite(collection_name='starships'):
         overwrite = False
 
     if overwrite:
-        return db[collection_name].delete_many({})
+        db[collection_name].delete_many({})
     else:
         print('Function to carry on as usual')
 

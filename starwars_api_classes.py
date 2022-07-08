@@ -37,31 +37,33 @@ class Starwars:
         for result in response.json()['results']:
             self.star_wars_data.append(result)
 
-        if response.json()[
-            'next'] is not None:  # If the value of 'next' contains a url to the next page, do the following:
+        if response.json()['next'] is not None:  # If the value of 'next' contains a url to the next page, do the following:
             self.page_number += 1  # Updates the page number
             return self.get_starwars_data()
 
         return self.star_wars_data  # Return the list of items
 
-    def get_pilot_info(self):
+
+    def get_item_count(self):
+        response = requests.request("GET", self.generate_url_string())
+        count = int(response.json()['count'])
+        return count
+
+
+    def get_pilot_info(self, starship_data, key_item='pilots'):
         # This function replaces the pilot key in a star wars dataset with the name
-
-        starship_data = self.get_starwars_data()
-
         for starship in starship_data:
             pilot_data = []
-            if starship['pilots']:
-                for pilot_url in starship['pilots']:
+            if starship[key_item]:
+                for pilot_url in starship[key_item]:
                     response = requests.request("GET", pilot_url)
                     pilot_data.append(response.json()['name'])
-                starship['pilots'] = pilot_data
+                starship[key_item] = pilot_data
 
         return starship_data
 
-    def replace_with_id(self):
+    def replace_with_id(self, starship_data):
         # This function replaces the pilot key in a star wars dataset with the object id
-        starship_data = self.get_pilot_info()
 
         for starship in starship_data:
             pilot_data = []
@@ -71,6 +73,7 @@ class Starwars:
                     pilot_data.append(object_id['_id'])
                     starship['pilots'] = pilot_data
         return starship_data
+
 
     def overwrite(self, collection_name='starships'):
         # User has the option of overwriting their specified collection
@@ -88,20 +91,19 @@ class Starwars:
             print('Function to carry on as usual')
 
 
-    def insert_data(self, collection_name='starships', overwrite=True):
+    def insert_data(self, dataset, overwrite=True):
         # This function uploads a given star wars dataset into a specified collection.
 
-        dataset = self.replace_with_id()
-
         if overwrite:  # Calling the overwrite function
-            self.db[collection_name].delete_many({})
+            self.db[self.keyword].delete_many({})
 
+        total_items_uploaded = 0
         collection_check = []
         for item in dataset:
-            self.db[collection_name].insert_one(item)  # Insert item into specified collection
-            collection_check.append(item['name'])  # Returns a list of all the items that have been uploaded
-        list_length = len(collection_check)
-
-        pprint(f'Uploaded following dataset: {collection_check} Length: {list_length}')
-        print('Function Completed')
-        return collection_check
+            self.db[self.keyword].insert_one(item)  # Insert item into specified collection
+            total_items_uploaded += 1
+        #     collection_check.append(item['name'])  # Returns a list of all the items that have been uploaded
+        # list_length = len(collection_check)
+        # pprint(f'Uploaded following dataset: {collection_check} Length: {list_length}')
+        # print('Function Completed')
+        return total_items_uploaded
