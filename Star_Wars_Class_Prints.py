@@ -21,3 +21,4 @@ print('-------------------------------------------------------------------------
 print()
 print('<-------------------------- 4. Inserting data into specified collection on MongoDB -------------------------->')
 starwars.insert_data(starships_id, overwrite=True)
+print('ALL DONE!!')
